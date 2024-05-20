@@ -1,107 +1,123 @@
-import React, { useEffect, useState } from "react";
-import { Button, Textarea } from "flowbite-react";
-import { useParams } from "react-router-dom";
-import axios from "axios";
-import generatePDF, { Resolution, Margin } from "react-to-pdf";
 
-function ContractAudit() {
-  const [codeData, setCodeData] = useState("");
-  const [audit, setAudit] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+import AceEditor from "react-ace";
 
-  const handleAudit = async () => {
-    setLoading(true);
-    console.log("Fetching data...");
-    try {
-      // Make POST request to backend
-      const response = await axios.post(
-        "http://localhost:3001/getAuditReport",
-        {
-          contractCode: codeData,
-        }
-      );
-      setAudit(response.data.gptResponse.choices[0].message.content);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
+import "ace-builds/src-noconflict/mode-java";
+import "ace-builds/src-noconflict/theme-github";
+import "ace-builds/src-noconflict/ext-language_tools";
+import { useState } from "react";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { addMessages, setContractCode, setLoading, setPseudoCode } from "@/redux/slice";
+import { startNewContract, systemRecord, updateSmartContract } from "@/ai/openai";
 
-  const options = {
-    resolution: Resolution.HIGH,
-    page: {
-      // margin is in MM, default is Margin.NONE = 0
-      margin: Margin.SMALL,
-    },
-  };
 
-  const getTargetElement = () => document.getElementById("content-id");
+import brace from 'brace'
+import 'brace/mode/rust';
 
-  return (
-    <div>
-      <div className="bg-black min-h-screen py-8">
-        <div className="container mx-auto">
-          <h1 className="text-4xl font-custom text-center mb-8 text-teal-500">
-             Audit
-          </h1>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 ml-5 mr-5">
-            <div className="bg-white p-4 rounded shadow-md ">
-              <h2 className="text-xl font-semibold mb-4 text-teal-500">
-                 Smart Contract Code
-              </h2>
-              <Textarea
-                id="code"
-                placeholder="Write your code here..."
-                required
-                rows={20}
-                value={codeData}
-                onChange={(e) => setCodeData(e.target.value)}
-              />
-              <div className="flex justify-end">
-                <Button
-                  onClick={handleAudit}
-                  className="deploy-button font-bold mt-3 px-3 py-1 text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded "
-                >
-                  Submit
-                </Button>
-              </div>
-            </div>
-            <div className="bg-white p-4 rounded shadow-md">
-              <h2 className="text-xl font-semibold mb-4 w-full text-teal-500">Audit</h2>
-              {loading ? (
-                <>
-                  {audit ? (
-                    <>
-                      <div id="content-id">
-                        <p className="break-words w-full whitespace-pre-wrap ">
-                          {audit}
-                        </p>
-                      </div>
-                      <div className="flex justify-end">
-                        <Button
-                          onClick={() => generatePDF(getTargetElement, options)}
-                          className="deploy-button font-bold mt-3 px-6 text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded "
-                        >
-                          Download PDF
-                        </Button>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="flex justify-center mt-20">
-                        Audit loading...
-                      </div>
-                    </>
-                  )}
-                </>
-              ) : (
-                <></>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+export type EditorProps = {
+  name: string;
+  title: string;
+  className: string;
+  showAction?: boolean;
+  padding?: number;
+  themeName?: string;
+  type: 'pseudo' | 'contract'
 }
 
-export default ContractAudit;
+export const Editor = ({ type, name, title, padding, showAction, className }: EditorProps) => {
+
+  const dispatch = useAppDispatch()
+  const loading = useAppSelector((store) => store.code.loading)
+  const pseudo = useAppSelector((store) => store.code.pseudoCode)
+  const messages = useAppSelector((store) => store.code.messages)
+
+  let text
+  if (type == 'pseudo') {
+    text = useAppSelector((store) => store.code.pseudoCode)
+  } else {
+    text = useAppSelector((store) => store.code.contractCode)
+  }
+
+  const contractCode = useAppSelector((store) => store.code.contractCode)
+
+  const purpose = useAppSelector((store) => store.code.title)
+
+  const updateText = (t: string) => {
+    if (type == 'pseudo') {
+      dispatch(setPseudoCode(t))
+      return
+    }
+    dispatch(setContractCode(t))
+  }
+
+  const convertFurther = async () => {
+    dispatch(setLoading(true))
+    if (contractCode !== '') {
+      // Do followups.
+      const msgs = [...messages, {
+        role: "user", content: pseudo
+      }]
+
+      console.log("here, folloups", msgs)
+      const response = await updateSmartContract(messages)
+
+      if (response) {
+        dispatch(setLoading(false))
+
+        dispatch(setContractCode(response))
+        msgs.push({ role: 'assistant', content: response })
+        dispatch(addMessages([{
+          role: "user", content: pseudo
+        }, { role: 'assistant', content: response }]))
+      }
+      return;
+    }
+    console.log("here, first time", purpose, pseudo)
+    // generate first draft.
+    const response = await startNewContract(purpose, pseudo)
+
+    if (response) {
+      dispatch(setLoading(false))
+      dispatch(setContractCode(response))
+
+      const messages = [{
+        'role': 'system',
+        'content': systemRecord
+      }, {
+        'role': 'user',
+        'content': `here are my requirements ${pseudo}`
+      }, {
+        'role': 'user',
+        'content': `I want to write a smart contract for ${purpose}. Your response should be just the contract itself, no explaination, titles or intro required.`
+      }, {
+        'role': 'assistant',
+        'content': response
+      }]
+
+      dispatch(addMessages(messages))
+    }
+  }
+
+  return (
+    <div className="flex flex-1 w-full bg-red-200 flex-col mb-4" style={{ paddingRight: padding }}>
+      <div className="flex flex-row w-full justify-between p-2">
+        <h1 className="text-2xl p-2 font-bold">{title}</h1>
+        {showAction && <button disabled={loading} onClick={convertFurther} className="btn btn-accent px-8">{loading ? 'Loading...' : '▶️ Convert'}</button>}
+      </div>
+      <AceEditor
+        style={{ width: '100%' }}
+        className={"bg-[#00E59A] flex flex-1 w-full " + className}
+        value={text}
+        mode="rust"
+        fontSize={16}
+        theme="solarized_light"
+        onChange={updateText}
+        showGutter
+        wrapEnabled
+        showPrintMargin={false}
+        highlightActiveLine
+        name={name}
+        editorProps={{ $blockScrolling: true }}
+      />
+    </div>
+  )
+}

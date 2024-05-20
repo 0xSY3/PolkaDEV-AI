@@ -145,7 +145,7 @@ Connect Wallet
         <h3 className="hidden text-gray-400 md:block">Effortless Smart Contract Development with AI-Powered InkCraft</h3>
       </div>
       <div className="grow"></div>
-      <button type="button" className="text-white bg-green hover:bg-blue-800  focus:outline-none focus:ring-green font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center me-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"onClick={() => navigate(`/EcoLearnCompanion`)}>
+      <button type="button" className="text-white bg-green hover:bg-blue-800  focus:outline-none focus:ring-green font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center me-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"onClick={() => navigate(`/askAI`)}>
 <svg className="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
 </svg>
