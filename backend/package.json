@@ -1,0 +1,33 @@
+{
+  "name": "hackathon-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "nodemon src/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/express": "^4.17.20",
+    "@types/node": "^20.8.7",
+    "solc": "^0.8.4",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@stacks/transactions": "^6.9.0",
+    "axios": "^1.5.1",
+    "body-parser": "^1.20.2",
+    "clsx": "^2.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "ethers": "^5.0.0",
+    "express": "^4.18.2",
+    "framer-motion": "^11.0.20",
+    "openai": "^4.12.4",
+    "tailwind-merge": "^2.2.2"
+  }
+}

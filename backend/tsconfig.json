@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+      "module": "CommonJS",
+      "moduleResolution": "node",
+      "esModuleInterop": true,
+      "target": "ES2020",
+      "sourceMap": true,
+      "outDir": "dist"
+  },
+  "include": [
+      "src/**/*", "../src/utils/service1.ts",
+  ],
+  "exclude": [
+      "node_modules"
+  ]
+}
