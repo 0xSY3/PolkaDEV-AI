@@ -21,7 +21,7 @@ function Home() {
     <div className="flex w-full items-center justify-between">
           <a className="flex items-center space-x-2" href="/">
             <img src="/artificial.png" alt="OP Knows logo" className="h-12"/>
-            <h1 className="text-3xl font-bold transition text-white">Dev AI</h1>
+            <h1 className="text-3xl font-bold transition text-white">PolkaDev </h1>
             <div className="relative max-w-fit inline-flex items-center justify-between box-border whitespace-nowrap px-1 h-7 text-small rounded-full bg-warning text-warning-foreground">
             </div>
           </a>
