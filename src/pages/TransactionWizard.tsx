@@ -40,13 +40,39 @@ function OpBreakdown() {
       console.error("Error fetching data:", error);
     }
   };
+  const compileNow = async () => {
+    const requestBody = {
+      code: contract,
+      config
+    };
+
+    try {
+      const response = await axios.post(process.env.NEXT_PUBLIC_BACKEND_API + '/compile', requestBody);
+      console.log('Response:', response.data);
+
+      if (response.status == 200 && response.data.response.status == 200) {
+        const { manifest, nef } = response.data.data
+        dispatch(setManifest(JSON.stringify(manifest)))
+        dispatch(setNef(nef))
+
+        alert('Compile Successful!')
+        // deployContractOnTestnet()
+      } else {
+        alert(response.data.message)
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      // alert('Contract Deployed on Testnet Succesfully!')
+      alert((error as any)?.message ?? 'Error Compiling the Code')
+    }
+  }
 
   return (
     <div>
       <div className="bg-gray-900 min-h-screen py-8 text-white">
         <div className="container mx-auto">
           <h1 className="text-4xl font-custom text-center mb-8 text-purple-500">
-            <span className="font-bold">Optimism Smart Contract Address:</span> {opAddress}
+            <span className="font-bold">Smart Contract Address:</span> {opAddress}
           </h1>
           <form onSubmit={handleSubmit} className="mb-8 flex items-center">
             <input
@@ -63,7 +89,7 @@ function OpBreakdown() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 ml-5 mr-5">
             <div className="bg-gray-800 p-4 rounded shadow-md">
               <h2 className="text-xl font-semibold mb-4 text-purple-500">
-                Optimism Smart Contract Code
+                Smart Contract Code
               </h2>
               {codeData || ""}
             </div>
