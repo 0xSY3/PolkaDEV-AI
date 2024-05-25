@@ -38,12 +38,38 @@ Follow these steps to set up and run PolkaDEV AI on your local machine.
 
 ### Installation
 
-1. **Clone the repository**
+ **Clone the repository**
    ```bash
    git clone https://github.com/your-username/polkadev-ai.git
    cd polkadev-ai
    ```
-2. ```
+Create a .env file in the root directory of the project.
+
+ ```
    npm install
    ```
+```
+npm run start
+```
+## Usage
+
+- **DEVAI Assistant**: Ask questions about the Polkadot ecosystem and get detailed responses.
+- **AI AuditDOT**: Audit your smart contracts to detect vulnerabilities and download audit reports.
+- **InkCraft**: Generate and convert pseudo code into Ink! smart contract code.
+- **Transaction Decoder**: Understand on-chain transactions by providing an address or hash.
+
+## Contributing
+
+We welcome contributions to improve PolkaDEV AI. To contribute:
+
+1. Fork the repository.
+2. Create a new branch: `git checkout -b feature/your-feature-name`.
+3. Make your changes and commit them: `git commit -m 'Add some feature'`.
+4. Push to the branch: `git push origin feature/your-feature-name`.
+5. Open a pull request.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
    
