@@ -6,7 +6,6 @@ Welcome to **PolkaDEV AI**, an innovative AI toolkit designed to assist develope
 
 1. **DEVAI Assistant**
    - Your on-chain development companion that answers all your questions about the Polkadot ecosystem.
-   - Example Query: *"What are parachain auctions, and how can I participate?"*
    - Provides detailed responses with code examples.
 
 2. **AI AuditDOT**
@@ -17,8 +16,7 @@ Welcome to **PolkaDEV AI**, an innovative AI toolkit designed to assist develope
 3. **InkCraft**
    - Effortless smart contract development using AI.
    - Generates Ink! smart contract code based on Intent and Pseudo Code.
-   - Example: *"I want a contract that locks ERC-20 tokens and rewards an ERC-721 NFT after 10 days."*
-   - Provides pseudo code with functions, definitions, and conditions.
+   - Provides code with functions, definitions, and conditions.
    - Converts pseudo code into Ink! smart contract code with a single click.
 
 4. **Transaction Decoder**
