@@ -43,6 +43,7 @@ Follow these steps to set up and run PolkaDEV AI on your local machine.
    git clone https://github.com/your-username/polkadev-ai.git
    cd polkadev-ai
    ```
-2. ```npm install
+2. ```
+   npm install
    ```
    
